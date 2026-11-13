@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "ระบบวันลา พมจ.สงขลา",
+  "short_name": "วันลา พมจ.",
+  "description": "ระบบบริหารจัดการวันลา สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดสงขลา",
+  "lang": "th",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "ยื่นใบลา", "url": "./?page=request", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "อนุมัติใบลา", "url": "./?page=approvals", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "ปฏิทินวันลา", "url": "./?page=calendar", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

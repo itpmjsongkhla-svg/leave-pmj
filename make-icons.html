@@ -1,0 +1,60 @@
+<!-- ===== ?????? 5: ???? make-icons.html (????????????????????????????????) ===== -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>????????????? ????????? ???.?????</title>
+<style>
+  body{font-family:Tahoma,sans-serif;max-width:760px;margin:24px auto;padding:0 16px;color:#1e1b4b}
+  .g{display:flex;gap:16px;flex-wrap:wrap}
+  .c{border:1px solid #ddd;border-radius:12px;padding:12px;text-align:center;font-size:13px}
+  .c img{display:block;width:120px;height:120px;margin:0 auto 8px;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/16px 16px}
+  button{padding:8px 14px;border:0;border-radius:8px;background:#4f46e5;color:#fff;cursor:pointer;font-size:14px}
+  .all{margin-top:20px;padding:12px 24px;font-size:16px}
+</style>
+</head>
+<body>
+<h2>????????????? ????????? ???.?????</h2>
+<p>???????????????????? ????????????????????? <b>icons</b> ??????????</p>
+<div class="g" id="g"></div>
+<button class="all" id="all">????????????? 4 ????</button>
+<script>
+function drawIcon(size, kind) { // kind: any = ???????, maskable / apple = ??????????????
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const x = c.getContext('2d'), s = size / 512;
+  const rr = (X, Y, W, H, R) => { x.beginPath(); x.moveTo(X + R, Y); x.arcTo(X + W, Y, X + W, Y + H, R); x.arcTo(X + W, Y + H, X, Y + H, R); x.arcTo(X, Y + H, X, Y, R); x.arcTo(X, Y, X + W, Y, R); x.closePath(); };
+  const g = x.createLinearGradient(0, 0, size, size);
+  g.addColorStop(0, '#4f46e5'); g.addColorStop(.55, '#7c3aed'); g.addColorStop(1, '#c026d3');
+  x.fillStyle = g;
+  if (kind === 'any') { rr(0, 0, size, size, 112 * s); x.fill(); } else x.fillRect(0, 0, size, size);
+  const k = kind === 'maskable' ? 0.78 : 1;
+  x.save(); x.translate(size / 2, size / 2); x.scale(k * s, k * s); x.translate(-256, -256);
+  x.shadowColor = 'rgba(0,0,0,.2)'; x.shadowBlur = 24; x.shadowOffsetY = 10;
+  x.fillStyle = '#fff'; rr(116, 140, 280, 256, 44); x.fill();
+  x.shadowColor = 'transparent';
+  x.fillStyle = '#e0e7ff'; rr(116, 140, 280, 76, 44); x.fill(); x.fillRect(116, 186, 280, 30);
+  x.fillStyle = '#fff'; x.strokeStyle = '#c7d2fe'; x.lineWidth = 6;
+  [184, 298].forEach(cx => { rr(cx, 106, 30, 70, 15); x.fill(); x.stroke(); });
+  const g2 = x.createLinearGradient(190, 250, 330, 350); g2.addColorStop(0, '#4f46e5'); g2.addColorStop(1, '#c026d3');
+  x.strokeStyle = g2; x.lineWidth = 34; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.beginPath(); x.moveTo(190, 302); x.lineTo(240, 350); x.lineTo(328, 256); x.stroke();
+  x.restore();
+  return c.toDataURL('image/png');
+}
+const LIST = [['icon-192.png', 192, 'any'], ['icon-512.png', 512, 'any'], ['icon-maskable-512.png', 512, 'maskable'], ['apple-touch-icon.png', 180, 'apple']];
+function dl(name, url) { const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+const g = document.getElementById('g');
+LIST.forEach(([n, s, k]) => {
+  const url = drawIcon(s, k), d = document.createElement('div');
+  d.className = 'c';
+  d.innerHTML = `<img src="${url}" alt="${n}"><div>${n}<br>${s}x${s} px</div><br>`;
+  const b = document.createElement('button'); b.textContent = '?????????'; b.onclick = () => dl(n, url);
+  d.appendChild(b); g.appendChild(d);
+});
+document.getElementById('all').onclick = async () => {
+  for (const [n, s, k] of LIST) { dl(n, drawIcon(s, k)); await new Promise(r => setTimeout(r, 600)); }
+};
+</script>
+</body>
+</html>

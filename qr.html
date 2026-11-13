@@ -1,0 +1,82 @@
+<!-- ===== ชุดที่ 9: ไฟล์ qr.html (หน้าโปสเตอร์ QR Code บน GitHub Pages) ===== -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Code ระบบวันลา พมจ.สงขลา</title>
+<link rel="icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  @page{size:A4 portrait;margin:0}
+  body{margin:0;background:#e2e8f0;font-family:Sarabun,'Noto Sans Thai',sans-serif;color:#1e1b4b}
+  .tools{text-align:center;padding:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .tools button{border:0;border-radius:10px;padding:10px 18px;font-size:15px;background:#4f46e5;color:#fff;cursor:pointer}
+  .tools button.alt{background:#fff;color:#4f46e5;border:1px solid #c7d2fe}
+  .page{width:210mm;height:296mm;margin:0 auto 24px;background:#fff;box-sizing:border-box;padding:16mm 18mm;text-align:center;position:relative}
+  .head{background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#c026d3);color:#fff;border-radius:20px;padding:9mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .head b{font-size:32px;display:block}.head span{font-size:16px}
+  h2{font-size:26px;margin:8mm 0 2mm}
+  #qr{width:95mm;height:95mm;display:block;margin:0 auto}
+  .url{font-size:12px;color:#64748b;word-break:break-all;margin-top:2mm}
+  .cols{display:flex;gap:6mm;text-align:left;margin-top:8mm;font-size:15px}
+  .box{flex:1;border:1.5px solid #c7d2fe;border-radius:14px;padding:5mm}
+  .box b{font-size:17px}
+  .foot{position:absolute;left:18mm;right:18mm;bottom:10mm;font-size:13px;color:#64748b}
+  @media print{body{background:#fff}.tools{display:none}.page{margin:0}}
+  @media (max-width:820px){.page{width:auto;height:auto;margin:0 8px 16px;padding:16px}.cols{flex-direction:column}.foot{position:static;margin-top:16px}#qr{width:70vw;height:70vw}}
+</style>
+</head>
+<body>
+<div class="tools">
+  <button onclick="window.print()">พิมพ์โปสเตอร์ A4</button>
+  <button class="alt" onclick="saveQr()">ดาวน์โหลด QR (PNG)</button>
+  <button class="alt" onclick="copyLink()">คัดลอกลิงก์</button>
+</div>
+<div class="page">
+  <div class="head"><b>ระบบบริหารจัดการวันลา</b><span>สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดสงขลา</span></div>
+  <h2>สแกน QR Code เพื่อเข้าใช้งาน</h2>
+  <img id="qr" alt="QR Code">
+  <div class="url" id="url"></div>
+  <div class="cols">
+    <div class="box"><b>Android (Chrome)</b><br>1. สแกน QR Code แล้วเปิดด้วย Chrome<br>2. แตะเมนู ⋮ มุมขวาบน<br>3. เลือก "ติดตั้งแอป" หรือ "เพิ่มลงในหน้าจอหลัก"</div>
+    <div class="box"><b>iPhone / iPad (Safari)</b><br>1. สแกน QR Code แล้วเปิดด้วย Safari<br>2. แตะปุ่ม "แชร์"<br>3. เลือก "เพิ่มไปยังหน้าจอโฮม" แล้วแตะ "เพิ่ม"</div>
+  </div>
+  <div class="foot">เข้าสู่ระบบด้วย Username และรหัสผ่านที่ได้รับจากงานบุคคล</div>
+</div>
+<script>
+const APP = new URL('./', location.href).href;
+document.getElementById('url').textContent = APP;
+async function make() {
+  const img = document.getElementById('qr');
+  if (!window.qrcode) { // สำรอง: ใช้บริการสร้าง QR ภายนอก
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=900x900&margin=20&ecc=H&data=' + encodeURIComponent(APP);
+    return;
+  }
+  const q = qrcode(0, 'H'); q.addData(APP); q.make();
+  const n = q.getModuleCount(), quiet = 4, cell = Math.floor(900 / (n + quiet * 2)), size = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, size, size); x.fillStyle = '#1e1b4b';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+  try { // วางโลโก้กลาง QR
+    const logo = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = 'icons/icon-192.png'; });
+    const L = Math.round(n * cell * 0.2), o = Math.round((size - L) / 2);
+    x.fillStyle = '#fff'; x.fillRect(o - cell, o - cell, L + cell * 2, L + cell * 2);
+    x.drawImage(logo, o, o, L, L);
+  } catch (e) {}
+  img.src = c.toDataURL('image/png');
+}
+function saveQr() {
+  const src = document.getElementById('qr').src;
+  if (src.startsWith('data:')) { const a = document.createElement('a'); a.href = src; a.download = 'QR_ระบบวันลา_พมจ.สงขลา.png'; document.body.appendChild(a); a.click(); a.remove(); }
+  else window.open(src, '_blank');
+}
+async function copyLink() {
+  try { await navigator.clipboard.writeText(APP); alert('คัดลอกลิงก์แล้ว'); } catch (e) { prompt('คัดลอกลิงก์นี้', APP); }
+}
+make();
+</script>
+</body>
+</html>
